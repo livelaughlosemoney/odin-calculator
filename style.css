@@ -25,6 +25,7 @@ body{
     font-size: 12vh;
     color:rgb(141, 102, 232);
     padding:1vw;
+    overflow:scroll; /* looking for a better alternative to long numbers */
 }
 
 .calculator-container{

@@ -1,8 +1,8 @@
 let firstNum, secondNum, operand;
 
 let storage =[];
-
-let displayValue ="";
+//let haveOperand = false;
+let firstOperation = true;
 
 const numberButtons = document.querySelectorAll(".number");
 const functionButtons = document.querySelectorAll(".function");
@@ -10,59 +10,68 @@ const display = document.querySelector(".display-screen");
 
 numberButtons.forEach((button) =>{
     button.addEventListener("click", () =>{
-        const value = button.innerText;
-        console.log(value);
-        if(storage[0]==undefined){
-            storage.push(value);
-            display.innerText = value;
+        let digit = button.innerText;
+        if(firstNum==undefined){
+            storage.push(digit);
+            display.innerText += digit;
         }
-        else if (storage[1]!=undefined && storage[2]==undefined){
-            storage.push(value);
-            display.innerText = value;
+        else if (secondNum == undefined && operand!=undefined){
+            display.innerText="";
+            storage.push(digit);
+            display.innerText += digit;
         }
-        else{
-            // idk yet
-        }
-        console.log(storage);
+
     });
 });
 
 functionButtons.forEach((button) =>{
     button.addEventListener("click", () =>{
-        pressFunction = true;
-        console.log(button.id);
-        const operation = button.id;
-        if(storage[0]!= undefined && storage[1] == undefined){
-            storage.push(operation);
+        //console.log(operand);
+        if(firstNum==undefined && operand == undefined){
+            operand = button.id;
+            firstNum = convertToNumber();
+            console.log(firstNum);
+            display.innerText ="";
         }
-        else if(storage[0]!= undefined
-            && storage[1]!= undefined
-            && storage[2]!= undefined
-        ){
-        const num2 = storage.pop();
-        const operand = storage.pop();
-        const num1 = storage.pop();
-        storage.push(operate(num1, operand, num2));
-        display.innerText = storage[0];
-        pressFunction = false;
-        // need to then store operate result as first index storage[0]
+        else if(secondNum == undefined){
+            secondNum = convertToNumber();
+            console.log(secondNum);
+            let temp = operate(firstNum, operand, secondNum);
+            firstNum = temp;
+            secondNum = undefined;
+            operand = button.id;
+            display.innerText= firstNum;
+            console.log(firstNum);
+            console.log(operand);
+            console.log(secondNum);
         }
-        else if(storage[0]!= undefined
-            && storage[1]!= undefined
-            && storage[2]== undefined){ //replacing the operand if they change their mind mid-way
-                storage.pop();
-                storage.push(operation);
-            }
+        else if (secondNUm != undefined && operand != undefined){
+            operand = button.id;
+            secondNum = undefined;
+            display.innerText ="";
+        }
+       /*  else{
+            console.log("executing correctly");
+            console.log(operate(firstNum, operand, secondNum));
+        } */
     });
     });
 
-function operate(firstNum, operand, secondNum){
-    const num1 = parseInt(firstNum);
-    const num2 = parseInt(secondNum);
+function convertToNumber (){
+    let numString = "";
+    while (storage.length >0){
+        numString+= storage.shift();
+    }
+    return parseInt(numString);
+}
+
+function operate(num1, operand, num2){
 
     switch(operand){
-        case "delete":
-                storage.pop();        
+        /* case "delete":
+                firstNum = undefined;
+                secondNum = undefined;
+                display.innerText = ""; */     
         case "add":
             return add(num1, num2);
         case "subtract":
@@ -71,12 +80,14 @@ function operate(firstNum, operand, secondNum){
             return multiply(num1, num2);
         case "divide":
             return divide(num1, num2);
-        case "all-clear":
+      /*   case "all-clear":
+            firstNum = undefined;
+            secondNum = undefined;
             while (storage.length > 0) {
                 storage.pop();
               }      
             display.innerText = "";
-        case ".": // what happens if they press the decimal button mid-calculation?
+        case ".":  */// what happens if they press the decimal button mid-calculation?
     } 
 
 }
