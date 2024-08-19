@@ -1,8 +1,8 @@
 let firstNum, secondNum, operand;
 
 let storage =[];
-//let haveOperand = false;
-let firstOperation = true;
+
+let displayValue = "";
 
 const numberButtons = document.querySelectorAll(".number");
 const functionButtons = document.querySelectorAll(".function");
@@ -13,12 +13,14 @@ numberButtons.forEach((button) =>{
         let digit = button.innerText;
         if(firstNum==undefined){
             storage.push(digit);
-            display.innerText += digit;
+            displayValue += digit;
+            display.innerText = displayValue;
         }
         else if (secondNum == undefined && operand!=undefined){
-            display.innerText="";
             storage.push(digit);
-            display.innerText += digit;
+            displayValue += digit;
+            display.innerText = displayValue;
+            console.log(storage);
         }
 
     });
@@ -27,29 +29,30 @@ numberButtons.forEach((button) =>{
 functionButtons.forEach((button) =>{
     button.addEventListener("click", () =>{
         //console.log(operand);
-        if(firstNum==undefined && operand == undefined){
+        if(firstNum == undefined && operand == undefined){
             operand = button.id;
             firstNum = convertToNumber();
             console.log(firstNum);
-            display.innerText ="";
         }
         else if(secondNum == undefined){
+            operand = button.id;
             secondNum = convertToNumber();
-            console.log(secondNum);
+            if(operand == "add"|| operand == "subtract"||operand == "divide" ||operand == "multiply"){
             let temp = operate(firstNum, operand, secondNum);
+            if(temp.toString().includes("."))
+                temp = Math.round(temp * 100) / 100;
             firstNum = temp;
             secondNum = undefined;
-            operand = button.id;
-            display.innerText= firstNum;
-            console.log(firstNum);
-            console.log(operand);
-            console.log(secondNum);
+        }
+            displayValue = firstNum;
+            display.innerText = displayValue;
         }
         else if (secondNUm != undefined && operand != undefined){
             operand = button.id;
             secondNum = undefined;
-            display.innerText ="";
+            display.innerText = "";
         }
+        displayValue = "";
        /*  else{
             console.log("executing correctly");
             console.log(operate(firstNum, operand, secondNum));
@@ -63,6 +66,10 @@ function convertToNumber (){
         numString+= storage.shift();
     }
     return parseInt(numString);
+}
+
+function refreshDisplay(){
+
 }
 
 function operate(num1, operand, num2){
@@ -80,14 +87,14 @@ function operate(num1, operand, num2){
             return multiply(num1, num2);
         case "divide":
             return divide(num1, num2);
-      /*   case "all-clear":
+        case "all-clear":
             firstNum = undefined;
             secondNum = undefined;
             while (storage.length > 0) {
                 storage.pop();
               }      
-            display.innerText = "";
-        case ".":  */// what happens if they press the decimal button mid-calculation?
+            display.innerText = ""; // doesn't display right because display is going through the function pressing
+        //case ".":  // what happens if they press the decimal button mid-calculation?
     } 
 
 }
