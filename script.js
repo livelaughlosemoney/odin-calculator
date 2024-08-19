@@ -1,6 +1,8 @@
 let firstNum, secondNum, operand;
 
-let storage =[];
+let digits =[];
+
+let stepResults = [];
 
 let displayValue = "";
 
@@ -11,91 +13,77 @@ const display = document.querySelector(".display-screen");
 numberButtons.forEach((button) =>{
     button.addEventListener("click", () =>{
         let digit = button.innerText;
-        if(firstNum==undefined){
-            storage.push(digit);
-            displayValue += digit;
-            display.innerText = displayValue;
-        }
-        else if (secondNum == undefined && operand!=undefined){
-            storage.push(digit);
-            displayValue += digit;
-            display.innerText = displayValue;
-            console.log(storage);
-        }
-
+        digits.push(digit);
+        displayValue+= digit;
+        display.innerText = displayValue;
+        console.log(digit);
     });
 });
 
 functionButtons.forEach((button) =>{
     button.addEventListener("click", () =>{
-        //console.log(operand);
-        if(firstNum == undefined && operand == undefined){
-            operand = button.id;
-            firstNum = convertToNumber();
-            console.log(firstNum);
-        }
-        else if(secondNum == undefined){
-            operand = button.id;
-            secondNum = convertToNumber();
-            if(operand == "add"|| operand == "subtract"||operand == "divide" ||operand == "multiply"){
-            let temp = operate(firstNum, operand, secondNum);
-            if(temp.toString().includes("."))
-                temp = Math.round(temp * 100) / 100;
-            firstNum = temp;
-            secondNum = undefined;
-        }
-            displayValue = firstNum;
+        convertToNumber(); //this way the second number gets stored first
+        if(stepResults.length>=2){
+            //clears the intermediary array and executes operation with them
+            const num2 = stepResults.pop();
+            const num1 = stepResults.pop();
+            let result = operate(num1, operand, num2);
+            //puts the result back into the array for math + changing displayValue
+            if(typeof(result)== "number"){
+                stepResults.push(result);
+                console.log(result);
+            }
+            //displays the result
             display.innerText = displayValue;
         }
-        else if (secondNUm != undefined && operand != undefined){
-            operand = button.id;
-            secondNum = undefined;
-            display.innerText = "";
-        }
         displayValue = "";
-       /*  else{
-            console.log("executing correctly");
-            console.log(operate(firstNum, operand, secondNum));
-        } */
+        operand = button.id;
+        console.log(operand);
     });
     });
 
 function convertToNumber (){
     let numString = "";
-    while (storage.length >0){
-        numString+= storage.shift();
+    while (digits.length >0){
+        numString+= digits.shift();
     }
-    return parseInt(numString);
+    console.log("convertToNumber executing");
+    stepResults.push(parseInt(numString));
+    console.log(stepResults);
 }
+
+function operate(num1, operation, num2){
+    switch(operation){
+        case("add"):
+            displayValue = add(num1, num2);
+            return add(num1, num2);
+        case("subtract"):
+            displayValue = subtract(num1, num2);
+            return subtract(num1, num2);
+        case("multiply"):
+            displayValue = multiply(num1, num2);
+            return multiply(num1, num2);
+        case("divide"):
+            displayValue = divide(num1, num2);
+            return divide(num1, num2);
+        case ("all-clear"):
+            displayValue = "";
+            while (stepResults.length >0){
+                stepResults.pop();
+            }
+            while (digits.length>0){
+                digits.pop();
+            }
+        case ("delete"):
+            digits.pop();
+            let temp = displayValue.slice(0, displayValue.length-1);
+            displayValue = temp;
+            display.innerText = displayValue;
+        }
+
+    }
 
 function refreshDisplay(){
-
-}
-
-function operate(num1, operand, num2){
-
-    switch(operand){
-        /* case "delete":
-                firstNum = undefined;
-                secondNum = undefined;
-                display.innerText = ""; */     
-        case "add":
-            return add(num1, num2);
-        case "subtract":
-            return subtract(num1, num2);
-        case "multiply":
-            return multiply(num1, num2);
-        case "divide":
-            return divide(num1, num2);
-        case "all-clear":
-            firstNum = undefined;
-            secondNum = undefined;
-            while (storage.length > 0) {
-                storage.pop();
-              }      
-            display.innerText = ""; // doesn't display right because display is going through the function pressing
-        //case ".":  // what happens if they press the decimal button mid-calculation?
-    } 
 
 }
 
