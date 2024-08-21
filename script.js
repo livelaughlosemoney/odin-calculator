@@ -18,18 +18,27 @@ numberButtons.forEach((button) =>{
         display.innerText = displayValue;
         console.log(digit);
     });
+    button.addEventListener("mousedown", () =>{
+        button.setAttribute("style", "background-color: rgba(141, 102, 232,0.2)");
+    })
+    button.addEventListener("mouseup", ()=>{
+        button.setAttribute("style", "background-color: rgb(164, 131, 242)");
+    })
 });
 
 functionButtons.forEach((button) =>{
     button.addEventListener("click", () =>{
-        convertToNumber(); //this way the second number gets stored first
-        if(stepResults.length>=2){
+        convertToNumber(button.id); //this way the second number gets stored first
+        if(button.id == "all-clear"){
+            clearDisplay();
+        }
+        else if(stepResults.length>=2){
             //clears the intermediary array and executes operation with them
             const num2 = stepResults.pop();
             const num1 = stepResults.pop();
             let result = operate(num1, operand, num2);
             //puts the result back into the array for math + changing displayValue
-            if(typeof(result)== "number"){
+            if(typeof(result)== "number" && result != NaN){
                 stepResults.push(result);
                 console.log(result);
             }
@@ -40,16 +49,31 @@ functionButtons.forEach((button) =>{
         operand = button.id;
         console.log(operand);
     });
+    button.addEventListener("mousedown", () =>{
+        button.setAttribute("style", "background-color: rgba(141, 102, 232,0.2)");
+    })
+    button.addEventListener("mouseup", ()=>{
+        button.setAttribute("style", "background-color: rgb(164, 131, 242)");
+    })
     });
 
-function convertToNumber (){
+function convertToNumber (buttonID){
     let numString = "";
     while (digits.length >0){
         numString+= digits.shift();
     }
     console.log("convertToNumber executing");
-    stepResults.push(parseInt(numString));
-    console.log(stepResults);
+    let temp;
+    if(buttonID == "decimal")
+        temp = parseFloat(numString);
+    else 
+        temp = parseInt(numString);
+    console.log(temp);
+    if(numString!=""){
+        console.log("it's working");
+        stepResults.push(temp);
+        console.log(stepResults);
+    }
 }
 
 function operate(num1, operation, num2){
@@ -66,25 +90,28 @@ function operate(num1, operation, num2){
         case("divide"):
             displayValue = divide(num1, num2);
             return divide(num1, num2);
-        case ("all-clear"):
-            displayValue = "";
-            while (stepResults.length >0){
-                stepResults.pop();
-            }
-            while (digits.length>0){
-                digits.pop();
-            }
         case ("delete"):
             digits.pop();
             let temp = displayValue.slice(0, displayValue.length-1);
             displayValue = temp;
             display.innerText = displayValue;
+        case ("enter"):
+            operand = "";
+        case("decimal"):
+            displayValue+=".";
         }
 
     }
 
-function refreshDisplay(){
-
+function clearDisplay(){
+    displayValue = "";
+    display.innerText = displayValue;
+    while (stepResults.length >0){
+        stepResults.pop();
+    }
+    while (digits.length>0){
+        digits.pop();
+    }
 }
 
 function add(num1, num2){
